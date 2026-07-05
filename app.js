@@ -5,7 +5,7 @@
 // Paste your deployed Apps Script Web App URL here after deployment:
 // Extensions > Apps Script > Deploy > New deployment > Web app > Execute as Me, Access: Anyone
 const CONFIG = {
-  API_URL: 'https://script.google.com/macros/s/AKfycbyZkdx0_mtSYj5FJ79XgR2xTGMyJcL1m4VtIxH8iB1PqYOiA1AHZP8K5_uxhV96m4224g/exec',
+  API_URL: 'https://script.google.com/macros/s/AKfycbwOTdw3RGRs4VWPaay5yWoC5oRKwzx3grbn4KB9jI4ovShuJvLWCqx3miQBVdIqxJuxEQ/exec',
   TRACKS: [
     { id: 'business', label: 'Business', color: '#F2B705' },
     { id: 'agriculture', label: 'Agriculture', color: '#4FA37B' },
@@ -118,7 +118,7 @@ function loadReveal() {
   const card = document.getElementById('reveal-card');
   apiGet('getLatestReveal').then(function (data) {
     if (!data || !data.profile) {
-      card.innerHTML = '<p class="reveal-empty">No reveal live yet. Check back tonight.</p>';
+      card.innerHTML = '<p class="reveal-empty">Tonight\'s reveal generates at 8pm — check back soon.</p>';
       return;
     }
     const p = data.profile;
