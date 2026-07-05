@@ -1,0 +1,335 @@
+/* NAIROBI NIGHTOWLS — STYLES
+   Design concept: a case file that only opens at night.
+   Dark navy ground, redacted-black stat blocks, amber "owl-eye"
+   glow as the single accent, mono type for anything that reads
+   like a dossier field, serif display for voice/personality. */
+
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap');
+
+:root {
+  --bg: #0B0E14;
+  --surface: #12161F;
+  --surface-raised: #171C27;
+  --redacted: #000000;
+  --accent: #F2B705;
+  --accent-dim: #7A620A;
+  --teal: #3FA79A;
+  --text: #E8E6DF;
+  --text-dim: #8A8F98;
+  --border: #232838;
+
+  --font-display: 'Fraunces', serif;
+  --font-body: 'Inter', sans-serif;
+  --font-mono: 'IBM Plex Mono', monospace;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+  line-height: 1.5;
+}
+
+a { color: var(--accent); }
+
+.container { max-width: 1040px; margin: 0 auto; padding: 0 24px; }
+
+/* ---- Header / hero ---------------------------------------------- */
+
+header.site-header {
+  border-bottom: 1px solid var(--border);
+  padding: 20px 0;
+}
+
+.site-header .container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.brand {
+  font-family: var(--font-display);
+  font-size: 1.3rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+
+.brand-tag {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--text-dim);
+  display: block;
+  margin-top: 2px;
+}
+
+.hero {
+  padding: 64px 0 40px;
+  border-bottom: 1px solid var(--border);
+}
+
+.hero h1 {
+  font-family: var(--font-display);
+  font-size: clamp(2.2rem, 5vw, 3.4rem);
+  font-weight: 500;
+  line-height: 1.05;
+  max-width: 14ch;
+  margin: 0 0 16px;
+}
+
+.hero h1 em {
+  font-style: normal;
+  color: var(--accent);
+}
+
+.hero p.lede {
+  color: var(--text-dim);
+  max-width: 56ch;
+  font-size: 1.05rem;
+}
+
+/* ---- Signature element: the reveal card -------------------------- */
+
+.reveal-section {
+  padding: 40px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.reveal-section .eyebrow {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  margin-bottom: 12px;
+  display: block;
+}
+
+.reveal-card {
+  position: relative;
+  overflow: hidden;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 28px 32px;
+  max-width: 480px;
+}
+
+.reveal-scanline {
+  position: absolute;
+  left: 0; right: 0; top: -20%;
+  height: 40%;
+  background: linear-gradient(180deg, transparent, rgba(242,183,5,0.10), transparent);
+  animation: scan 4.5s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes scan {
+  0% { top: -40%; }
+  100% { top: 120%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal-scanline { animation: none; display: none; }
+}
+
+.reveal-rarity {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.14em;
+  color: var(--accent);
+}
+
+.reveal-alias {
+  font-family: var(--font-display);
+  font-size: 1.7rem;
+  margin: 6px 0 2px;
+}
+
+.reveal-track { color: var(--text-dim); font-size: 0.9rem; margin: 0 0 18px; }
+
+.reveal-stats { display: grid; grid-template-columns: auto 1fr; gap: 6px 16px; margin: 0 0 18px; }
+.reveal-stats dt { font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-dim); }
+.reveal-stats dd {
+  margin: 0;
+  font-family: var(--font-mono);
+  background: var(--redacted);
+  color: var(--redacted);
+  padding: 2px 8px;
+  border-radius: 2px;
+  letter-spacing: 0.1em;
+  user-select: none;
+}
+
+.reveal-bio { color: var(--text-dim); font-size: 0.92rem; margin: 0; }
+.reveal-empty { color: var(--text-dim); font-family: var(--font-mono); font-size: 0.9rem; }
+
+/* ---- Track tabs -------------------------------------------------- */
+
+.tracks-section { padding: 40px 0 0; }
+
+#track-tabs { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 28px; }
+
+.track-tab {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  background: var(--surface);
+  color: var(--text-dim);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 8px 16px;
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s;
+}
+
+.track-tab:hover { color: var(--text); }
+
+.track-tab.active {
+  color: var(--bg);
+  background: var(--track-color, var(--accent));
+  border-color: var(--track-color, var(--accent));
+  font-weight: 500;
+}
+
+.track-tab:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* ---- Ideas board -------------------------------------------------- */
+
+#ideas-list { display: grid; gap: 12px; margin-bottom: 40px; }
+
+.idea-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 18px 20px;
+}
+
+.idea-card h4 { margin: 0 0 6px; font-family: var(--font-display); font-weight: 600; font-size: 1.05rem; }
+.idea-card p { margin: 0 0 12px; color: var(--text-dim); font-size: 0.92rem; }
+
+.idea-meta { display: flex; justify-content: flex-end; }
+
+.upvote-btn {
+  font-family: var(--font-mono);
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--accent);
+  border-radius: 4px;
+  padding: 6px 12px;
+  cursor: pointer;
+  font-size: 0.85rem;
+}
+
+.upvote-btn:hover { border-color: var(--accent); }
+
+.loading, .empty, .success { color: var(--text-dim); font-family: var(--font-mono); font-size: 0.88rem; }
+.success { color: var(--teal); }
+
+/* ---- Weekly rhythm strip ------------------------------------------- */
+
+.week-section { padding: 40px 0; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+
+#week-strip {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 8px;
+}
+
+.week-day {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 12px 10px;
+  min-height: 88px;
+}
+
+.week-day.filled { border-color: var(--accent-dim); }
+
+.week-day-label {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--accent);
+  letter-spacing: 0.1em;
+}
+
+.week-day-feature {
+  display: block;
+  margin-top: 8px;
+  font-size: 0.82rem;
+  color: var(--text-dim);
+}
+
+@media (max-width: 720px) {
+  #week-strip { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* ---- Forms ------------------------------------------------------- */
+
+.forms-section { padding: 40px 0 64px; display: grid; gap: 32px; grid-template-columns: 1fr 1fr; }
+
+@media (max-width: 720px) {
+  .forms-section { grid-template-columns: 1fr; }
+}
+
+.form-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 24px;
+}
+
+.form-card h3 { font-family: var(--font-display); font-size: 1.15rem; margin: 0 0 16px; }
+
+.form-card label {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--text-dim);
+  margin: 12px 0 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.form-card input, .form-card select, .form-card textarea {
+  width: 100%;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  color: var(--text);
+  border-radius: 4px;
+  padding: 9px 10px;
+  font-family: var(--font-body);
+  font-size: 0.92rem;
+}
+
+.form-card input:focus, .form-card select:focus, .form-card textarea:focus {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+  border-color: var(--accent);
+}
+
+.form-card button[type="submit"] {
+  margin-top: 18px;
+  background: var(--accent);
+  color: var(--bg);
+  border: none;
+  border-radius: 4px;
+  padding: 10px 18px;
+  font-family: var(--font-body);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.form-card button[type="submit"]:hover { background: #ffce33; }
+
+/* ---- Footer -------------------------------------------------------- */
+
+footer {
+  border-top: 1px solid var(--border);
+  padding: 24px 0 40px;
+  color: var(--text-dim);
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+}
