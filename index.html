@@ -1,577 +1,110 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Nairobi Nightowls</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
-
-<!-- React + ReactDOM (production builds, served from a CDN) -->
-<script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-<script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-<!-- Babel Standalone lets the browser run JSX directly, no build step needed for GitHub Pages -->
-<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-
-<style>
-  :root {
-    --bg: #0B0F1A;
-    --panel: #141B2E;
-    --panel-2: #1B2440;
-    --gold: #C9A24B;
-    --green: #3A7D68;
-    --text: #EDE8DC;
-    --muted: #7C8494;
-    --line: #2A3350;
-  }
-  * { box-sizing: border-box; }
-  html, body { margin: 0; padding: 0; }
-  body {
-    background: radial-gradient(circle at 20% 0%, #171F35 0%, var(--bg) 55%);
-    color: var(--text);
-    font-family: 'Inter', system-ui, sans-serif;
-    min-height: 100vh;
-  }
-  h1, h2, h3, h4 { font-family: 'Fraunces', Georgia, serif; margin: 0 0 8px; }
-
-  .boot { height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; }
-  .boot-owl { font-size: 40px; color: var(--gold); animation: pulse 1.6s ease-in-out infinite; }
-  .boot-text { color: var(--muted); font-family: 'IBM Plex Mono', monospace; font-size: 13px; }
-  @keyframes pulse { 0%,100% { opacity: .4; } 50% { opacity: 1; } }
-
-  .auth-wrap { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 24px; }
-  .auth-card { width: 100%; max-width: 380px; background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 32px 28px; text-align: center; }
-  .auth-mark { font-size: 28px; color: var(--gold); margin-bottom: 8px; }
-  .auth-title { font-size: 26px; }
-  .auth-sub { color: var(--muted); font-size: 13px; margin: 0 0 24px; font-family: 'IBM Plex Mono', monospace; }
-  .auth-toggle { display: flex; background: var(--bg); border-radius: 10px; padding: 4px; margin-bottom: 20px; border: 1px solid var(--line); }
-  .auth-toggle button { flex: 1; padding: 8px; border: none; background: transparent; color: var(--muted); border-radius: 8px; cursor: pointer; font-size: 13px; }
-  .auth-toggle button.active { background: var(--panel-2); color: var(--text); }
-  .auth-form { display: flex; flex-direction: column; gap: 14px; text-align: left; }
-  .auth-form label { display: flex; flex-direction: column; gap: 6px; font-size: 12px; color: var(--muted); }
-  .auth-form input, .auth-form select { background: var(--bg); border: 1px solid var(--line); color: var(--text); padding: 10px 12px; border-radius: 8px; font-size: 14px; }
-  .auth-form input:focus, .auth-form select:focus { outline: 2px solid var(--gold); outline-offset: 1px; }
-  .auth-error { color: #E28B87; font-size: 12px; }
-  .auth-submit { background: var(--gold); color: #201804; border: none; padding: 12px; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 14px; margin-top: 4px; }
-  .auth-submit:disabled { opacity: .6; cursor: default; }
-  .auth-warning { color: var(--muted); font-size: 11px; margin-top: 16px; line-height: 1.5; }
-
-  .topbar { display: flex; justify-content: space-between; align-items: center; padding: 16px 24px; border-bottom: 1px solid var(--line); }
-  .brand { font-family: 'Fraunces', serif; font-size: 18px; display: flex; align-items: center; gap: 8px; }
-  .brand-mark { color: var(--gold); }
-  .who { display: flex; align-items: center; gap: 12px; font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: var(--muted); }
-  .logout { background: none; border: 1px solid var(--line); color: var(--muted); padding: 6px 10px; border-radius: 6px; cursor: pointer; font-size: 12px; }
-
-  .trackbar { display: flex; gap: 8px; padding: 14px 24px; overflow-x: auto; border-bottom: 1px solid var(--line); }
-  .chip { border: 1px solid var(--line); background: transparent; color: var(--muted); padding: 6px 14px; border-radius: 999px; font-size: 12px; cursor: pointer; white-space: nowrap; }
-  .chip.active { color: var(--chip-color, var(--gold)); border-color: var(--chip-color, var(--gold)); }
-
-  .tabbar { display: flex; gap: 4px; padding: 0 24px; margin-top: 14px; border-bottom: 1px solid var(--line); overflow-x: auto; }
-  .tab { background: none; border: none; color: var(--muted); padding: 10px 14px; cursor: pointer; font-size: 13px; border-bottom: 2px solid transparent; white-space: nowrap; }
-  .tab.active { color: var(--text); border-bottom-color: var(--gold); }
-
-  .content { padding: 24px; max-width: 760px; margin: 0 auto; }
-  .panel { display: flex; flex-direction: column; gap: 20px; }
-
-  .today-strip { display: flex; justify-content: space-between; font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--muted); padding-bottom: 4px; flex-wrap: wrap; gap: 6px; }
-  .today-label { color: var(--gold); }
-  .reveal-card { position: relative; overflow: hidden; background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: 28px; opacity: 0; transform: translateY(6px); transition: opacity .5s ease, transform .5s ease; }
-  .reveal-card.revealed { opacity: 1; transform: translateY(0); }
-  .reveal-scan { position: absolute; inset: 0; background: linear-gradient(120deg, transparent, rgba(201,162,75,0.15), transparent); transform: translateX(-100%); animation: scan 1.1s ease forwards; }
-  @keyframes scan { to { transform: translateX(100%); } }
-  .reveal-tag { display: inline-block; border: 1px solid; padding: 3px 10px; border-radius: 999px; font-size: 11px; font-family: 'IBM Plex Mono', monospace; margin-bottom: 10px; }
-  .reveal-rarity { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--muted); margin-bottom: 4px; }
-  .reveal-alias { font-size: 24px; margin-bottom: 12px; }
-  .reveal-field { display: flex; justify-content: space-between; font-size: 13px; color: var(--muted); border-top: 1px solid var(--line); padding: 8px 0; }
-  .redacted { font-family: 'IBM Plex Mono', monospace; letter-spacing: 2px; }
-  .reveal-lesson { font-style: italic; color: var(--text); margin: 14px 0; line-height: 1.5; }
-  .reveal-actions { display: flex; gap: 10px; margin-top: 10px; flex-wrap: wrap; }
-  .follow { background: transparent; border: 1px solid var(--gold); color: var(--gold); padding: 8px 16px; border-radius: 8px; cursor: pointer; font-size: 13px; }
-  .follow.following { background: var(--gold); color: #201804; }
-  .reveal-next { background: var(--panel-2); border: 1px solid var(--line); color: var(--text); padding: 8px 16px; border-radius: 8px; cursor: pointer; font-size: 13px; }
-
-  .post-form { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 18px; display: flex; flex-direction: column; gap: 10px; }
-  .post-form input, .post-form textarea, .post-form select { background: var(--bg); border: 1px solid var(--line); color: var(--text); padding: 10px 12px; border-radius: 8px; font-size: 13px; font-family: inherit; }
-  .form-row { display: flex; gap: 10px; flex-wrap: wrap; }
-  .form-row select { flex: 1; min-width: 140px; }
-  .form-row input { flex: 2; min-width: 160px; }
-  .post-form button[type="submit"] { background: var(--green); color: #E8F5F0; border: none; padding: 10px; border-radius: 8px; cursor: pointer; font-size: 13px; font-weight: 600; }
-  .post-form button[type="submit"]:disabled { opacity: .6; cursor: default; }
-
-  .list { display: flex; flex-direction: column; gap: 12px; }
-  .card { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 16px; }
-  .card p { color: var(--muted); font-size: 13px; margin: 6px 0; }
-  .card-tag { display: inline-block; border: 1px solid; padding: 2px 8px; border-radius: 999px; font-size: 10px; font-family: 'IBM Plex Mono', monospace; margin-bottom: 8px; }
-  .card-foot { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; font-size: 12px; color: var(--muted); flex-wrap: wrap; gap: 6px; }
-  .upvote { background: var(--panel-2); border: 1px solid var(--line); color: var(--text); padding: 5px 12px; border-radius: 999px; cursor: pointer; font-size: 12px; }
-  .link-chip { display: inline-block; margin-top: 6px; font-size: 12px; color: var(--gold); text-decoration: none; border: 1px solid var(--gold); padding: 4px 10px; border-radius: 999px; }
-  .muted { color: var(--muted); font-size: 13px; }
-  .empty { color: var(--muted); font-size: 13px; text-align: center; padding: 24px; border: 1px dashed var(--line); border-radius: 12px; }
-  .loading { color: var(--muted); font-size: 13px; text-align: center; padding: 24px; font-family: 'IBM Plex Mono', monospace; }
-
-  .clip-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 14px; }
-  .clip-card { display: flex; flex-direction: column; }
-  .clip-thumb { background: var(--bg); border: 1px solid var(--line); border-radius: 8px; height: 100px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; margin-bottom: 10px; }
-  .clip-play { font-size: 20px; color: var(--gold); }
-  .clip-platform { font-size: 11px; color: var(--muted); font-family: 'IBM Plex Mono', monospace; }
-  .clip-link { color: var(--green); font-size: 12px; text-decoration: none; }
-
-  .weekly-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 12px; }
-  .weekly-card { position: relative; background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 14px; }
-  .weekly-card.is-today { border-color: var(--gold); }
-  .weekly-day { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--gold); }
-  .weekly-label { font-weight: 600; margin: 4px 0; font-size: 14px; }
-  .weekly-detail { font-size: 12px; color: var(--muted); line-height: 1.4; }
-  .weekly-badge { position: absolute; top: 10px; right: 10px; background: var(--gold); color: #201804; font-size: 9px; padding: 2px 6px; border-radius: 999px; }
-
-  .config-banner { background: #3A1F1F; border: 1px solid #6B3A3A; color: #F0C9C9; padding: 10px 24px; font-size: 12px; font-family: 'IBM Plex Mono', monospace; text-align: center; }
-
-  @media (max-width: 560px) {
-    .content { padding: 16px; }
-  }
-</style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nairobi Nightowls — Built in the dark. Seen in the results.</title>
+<link rel="stylesheet" href="styles.css">
 </head>
 <body>
-<div id="root"></div>
 
-<script type="text/babel">
-const { useState, useEffect, useCallback } = React;
-
-/* =========================================================
-   EDIT ME: paste your Apps Script Web App URL here.
-   (Deploy > New deployment > Web app in the Apps Script editor)
-   ========================================================= */
-const API_URL = "https://script.google.com/macros/s/AKfycbzs-zCXi7mx95jBQGQCYjDSVGhvJh1ZdvuvOU_5L_IEcl3Ez0ld4LqhiytNRQ96fGCU/exec";
-
-const TRACKS = [
-  { id: "business", label: "Business", color: "#C9A24B" },
-  { id: "agriculture", label: "Agriculture", color: "#3A7D68" },
-  { id: "it", label: "IT / Tech", color: "#5B8DEF" },
-  { id: "politics", label: "Politics & Civic", color: "#B5544E" },
-  { id: "campus", label: "Campus Life", color: "#9B6FB0" },
-];
-
-const WEEKLY = [
-  { day: "Mon", label: "Topic of the Week", detail: "This week: pricing power in informal markets" },
-  { day: "Tue", label: "Idea of the Week", detail: "Editorial pick from the Ideas Board" },
-  { day: "Wed", label: "Book of the Week", detail: "One paragraph takeaway, one action step" },
-  { day: "Thu", label: "Company of the Week", detail: "A Kenyan or African company worth studying" },
-  { day: "Fri", label: "Nightowl of the Week", detail: "A decision they made early that you can apply" },
-  { day: "Sat", label: "Quote of the Week", detail: "Something short, worth sitting with" },
-  { day: "Sun", label: "The Ledger", detail: "Anonymized small wins from the community" },
-];
-
-/* ---------------------------------------------------------
-   API adapter — talks to the Google Apps Script backend
---------------------------------------------------------- */
-async function callApi(action, params = {}) {
-  const query = new URLSearchParams({ action, ...params }).toString();
-  const res = await fetch(`${API_URL}?${query}`);
-  return res.json();
-}
-
-async function postApi(action, params = {}) {
-  const res = await fetch(API_URL, {
-    method: "POST",
-    body: JSON.stringify({ action, ...params }),
-  });
-  return res.json();
-}
-
-function isConfigured() {
-  return API_URL && API_URL.indexOf("PASTE_YOUR") === -1;
-}
-
-function App() {
-  const [configured] = useState(isConfigured());
-  const [booting, setBooting] = useState(true);
-  const [user, setUser] = useState(null);
-  const [authMode, setAuthMode] = useState("login");
-  const [authError, setAuthError] = useState("");
-  const [authBusy, setAuthBusy] = useState(false);
-  const [form, setForm] = useState({ username: "", password: "", track: "business" });
-
-  const [tab, setTab] = useState("reveal");
-  const [activeTrack, setActiveTrack] = useState("all");
-
-  const [ideas, setIdeas] = useState([]);
-  const [groups, setGroups] = useState([]);
-  const [clips, setClips] = useState([]);
-  const [nightowls, setNightowls] = useState([]);
-  const [loadingList, setLoadingList] = useState(false);
-
-  const [revealProfile, setRevealProfile] = useState(null);
-  const [revealed, setRevealed] = useState(false);
-  const [following, setFollowing] = useState({});
-
-  const [ideaForm, setIdeaForm] = useState({ title: "", detail: "", track: "business", link: "" });
-  const [groupForm, setGroupForm] = useState({ name: "", track: "business", location: "" });
-  const [clipForm, setClipForm] = useState({ caption: "", link: "", track: "business" });
-
-  useEffect(() => {
-    setBooting(false);
-  }, []);
-
-  function pickReveal(pool) {
-    const list = pool.length ? pool : nightowls;
-    const filtered = activeTrack !== "all" ? list.filter((n) => n.Track === activeTrack) : list;
-    const chosen = (filtered.length ? filtered : list)[Math.floor(Math.random() * (filtered.length ? filtered.length : list.length))];
-    setRevealProfile(chosen || null);
-    setRevealed(false);
-    setTimeout(() => setRevealed(true), 550);
-  }
-
-  async function loadNightowlsAndReveal() {
-    const res = await callApi("getNightowls", { track: "all" });
-    if (res.success) {
-      setNightowls(res.nightowls);
-      pickReveal(res.nightowls);
-    }
-  }
-
-  async function loadIdeas() {
-    setLoadingList(true);
-    const res = await callApi("getIdeas", { track: activeTrack });
-    if (res.success) setIdeas(res.ideas);
-    setLoadingList(false);
-  }
-
-  async function loadGroups() {
-    setLoadingList(true);
-    const res = await callApi("getGroups", { track: activeTrack });
-    if (res.success) setGroups(res.groups);
-    setLoadingList(false);
-  }
-
-  async function loadClips() {
-    setLoadingList(true);
-    const res = await callApi("getClips", { track: activeTrack });
-    if (res.success) setClips(res.clips);
-    setLoadingList(false);
-  }
-
-  useEffect(() => {
-    if (!user) return;
-    if (tab === "reveal") loadNightowlsAndReveal();
-    if (tab === "ideas") loadIdeas();
-    if (tab === "groups") loadGroups();
-    if (tab === "clips") loadClips();
-    // eslint-disable-next-line
-  }, [user, tab, activeTrack]);
-
-  async function handleAuth(e) {
-    e.preventDefault();
-    setAuthError("");
-    const uname = form.username.trim().toLowerCase();
-    if (!uname || !form.password) {
-      setAuthError("Enter a username and password.");
-      return;
-    }
-    setAuthBusy(true);
-    const action = authMode === "signup" ? "signup" : "login";
-    const res = await postApi(action, {
-      username: uname,
-      password: form.password,
-      track: form.track,
-    });
-    setAuthBusy(false);
-
-    if (!res.success) {
-      setAuthError(res.error || "Something went wrong.");
-      return;
-    }
-    setUser(res.user);
-    setActiveTrack(res.user.track);
-  }
-
-  function logout() {
-    setUser(null);
-    setForm({ username: "", password: "", track: "business" });
-    setTab("reveal");
-  }
-
-  async function submitIdea(e) {
-    e.preventDefault();
-    if (!ideaForm.title.trim()) return;
-    const res = await postApi("addIdea", { ...ideaForm, author: user.username });
-    if (res.success) {
-      setIdeaForm({ title: "", detail: "", track: ideaForm.track, link: "" });
-      loadIdeas();
-    }
-  }
-
-  async function upvote(id) {
-    const res = await postApi("upvoteIdea", { id });
-    if (res.success) loadIdeas();
-  }
-
-  async function submitGroup(e) {
-    e.preventDefault();
-    if (!groupForm.name.trim()) return;
-    const res = await postApi("addGroup", { ...groupForm, founder: user.username });
-    if (res.success) {
-      setGroupForm({ name: "", track: groupForm.track, location: "" });
-      loadGroups();
-    }
-  }
-
-  async function joinGroup(id) {
-    const res = await postApi("joinGroup", { id });
-    if (res.success) loadGroups();
-  }
-
-  async function submitClip(e) {
-    e.preventDefault();
-    if (!clipForm.link.trim()) return;
-    const res = await postApi("addClip", { ...clipForm, author: user.username });
-    if (res.success) {
-      setClipForm({ caption: "", link: "", track: clipForm.track });
-      loadClips();
-    }
-  }
-
-  async function toggleFollow(nightowlId) {
-    setFollowing((f) => ({ ...f, [nightowlId]: !f[nightowlId] }));
-    await postApi("followNightowl", { username: user.username, nightowlId });
-  }
-
-  const trackMeta = (id) => TRACKS.find((t) => t.id === id) || TRACKS[0];
-  const todayIdx = new Date().getDay();
-  const weeklyOrder = [1, 2, 3, 4, 5, 6, 0];
-  const todayFeature = WEEKLY[weeklyOrder.indexOf(todayIdx)];
-
-  if (!configured) {
-    return (
-      <div className="boot">
-        <div className="boot-owl">&#9672;</div>
-        <div className="boot-text" style={{ maxWidth: 420, textAlign: "center", lineHeight: 1.6 }}>
-          API_URL isn't set yet.<br />
-          Open this HTML file, find the line starting with <code>const API_URL</code>,
-          and paste in your Google Apps Script Web App deployment URL.
-        </div>
-      </div>
-    );
-  }
-
-  if (booting) {
-    return (
-      <div className="boot">
-        <div className="boot-owl">&#9672;</div>
-        <div className="boot-text">waking the nightowls&hellip;</div>
-      </div>
-    );
-  }
-
-  if (!user) {
-    return (
-      <div className="auth-wrap">
-        <div className="auth-card">
-          <div className="auth-mark">&#9672;</div>
-          <h1 className="auth-title">Nairobi Nightowls</h1>
-          <p className="auth-sub">Built in the dark. Seen in the results.</p>
-
-          <div className="auth-toggle">
-            <button className={authMode === "login" ? "active" : ""} onClick={() => setAuthMode("login")}>Log in</button>
-            <button className={authMode === "signup" ? "active" : ""} onClick={() => setAuthMode("signup")}>Create account</button>
-          </div>
-
-          <form onSubmit={handleAuth} className="auth-form">
-            <label>
-              Username
-              <input type="text" value={form.username} onChange={(e) => setForm({ ...form, username: e.target.value })} placeholder="e.g. midnight_farmer" autoComplete="username" />
-            </label>
-            <label>
-              Password
-              <input type="password" value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} placeholder="********" autoComplete={authMode === "signup" ? "new-password" : "current-password"} />
-            </label>
-            {authMode === "signup" && (
-              <label>
-                Your track
-                <select value={form.track} onChange={(e) => setForm({ ...form, track: e.target.value })}>
-                  {TRACKS.map((t) => <option key={t.id} value={t.id}>{t.label}</option>)}
-                </select>
-              </label>
-            )}
-            {authError && <div className="auth-error">{authError}</div>}
-            <button type="submit" className="auth-submit" disabled={authBusy}>
-              {authBusy ? "Please wait…" : authMode === "signup" ? "Create account" : "Enter"}
-            </button>
-          </form>
-        </div>
-      </div>
-    );
-  }
-
-  return (
-    <div className="app">
-      <header className="topbar">
-        <div className="brand"><span className="brand-mark">&#9672;</span> Nairobi Nightowls</div>
-        <div className="who">
-          <span>@{user.username}</span>
-          <button className="logout" onClick={logout}>Log out</button>
-        </div>
-      </header>
-
-      <div className="trackbar">
-        <button className={activeTrack === "all" ? "chip active" : "chip"} onClick={() => setActiveTrack("all")}>All tracks</button>
-        {TRACKS.map((t) => (
-          <button key={t.id} className={activeTrack === t.id ? "chip active" : "chip"} style={{ "--chip-color": t.color }} onClick={() => setActiveTrack(t.id)}>
-            {t.label}
-          </button>
-        ))}
-      </div>
-
-      <nav className="tabbar">
-        {[
-          ["reveal", "Tonight's Reveal"],
-          ["ideas", "Ideas Board"],
-          ["groups", "Youth Groups"],
-          ["clips", "Clips & Links"],
-          ["weekly", "Weekly Rhythm"],
-        ].map(([id, label]) => (
-          <button key={id} className={tab === id ? "tab active" : "tab"} onClick={() => setTab(id)}>{label}</button>
-        ))}
-      </nav>
-
-      <main className="content">
-        {tab === "reveal" && revealProfile && (
-          <div className="panel">
-            <div className="today-strip">
-              <span className="today-label">Today &middot; {todayFeature.label}</span>
-              <span>{todayFeature.detail}</span>
-            </div>
-            <div className={"reveal-card" + (revealed ? " revealed" : "")}>
-              <div className="reveal-scan"></div>
-              <div className="reveal-tag" style={{ color: trackMeta(revealProfile.Track).color, borderColor: trackMeta(revealProfile.Track).color }}>
-                {trackMeta(revealProfile.Track).label}
-              </div>
-              <div className="reveal-rarity">{revealProfile.Rarity}</div>
-              <h2 className="reveal-alias">{revealProfile.Alias}</h2>
-              <div className="reveal-field"><span>County</span><span className="redacted">{revealProfile.County}</span></div>
-              <p className="reveal-lesson">&ldquo;{revealProfile.Lesson}&rdquo;</p>
-              <div className="reveal-actions">
-                <button className={following[revealProfile.ID] ? "follow following" : "follow"} onClick={() => toggleFollow(revealProfile.ID)}>
-                  {following[revealProfile.ID] ? "Following" : "Follow"}
-                </button>
-                <button className="reveal-next" onClick={() => pickReveal(nightowls)}>Reveal another</button>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {tab === "ideas" && (
-          <div className="panel">
-            <form className="post-form" onSubmit={submitIdea}>
-              <h3>Post an idea</h3>
-              <input placeholder="Idea title" value={ideaForm.title} onChange={(e) => setIdeaForm({ ...ideaForm, title: e.target.value })} />
-              <textarea placeholder="What's the idea?" rows="3" value={ideaForm.detail} onChange={(e) => setIdeaForm({ ...ideaForm, detail: e.target.value })}></textarea>
-              <div className="form-row">
-                <select value={ideaForm.track} onChange={(e) => setIdeaForm({ ...ideaForm, track: e.target.value })}>
-                  {TRACKS.map((t) => <option key={t.id} value={t.id}>{t.label}</option>)}
-                </select>
-                <input placeholder="Optional: TikTok/YouTube link" value={ideaForm.link} onChange={(e) => setIdeaForm({ ...ideaForm, link: e.target.value })} />
-              </div>
-              <button type="submit">Post idea</button>
-            </form>
-            <div className="list">
-              {loadingList && <div className="loading">loading&hellip;</div>}
-              {!loadingList && ideas.length === 0 && <div className="empty">No ideas here yet. Be the first to post one.</div>}
-              {!loadingList && ideas.map((idea) => (
-                <div className="card" key={idea.ID}>
-                  <div className="card-tag" style={{ color: trackMeta(idea.Track).color, borderColor: trackMeta(idea.Track).color }}>{trackMeta(idea.Track).label}</div>
-                  <h4>{idea.Title}</h4>
-                  {idea.Detail && <p>{idea.Detail}</p>}
-                  {idea.Link && <a className="link-chip" href={idea.Link} target="_blank" rel="noreferrer">&#9654; clip attached &#8599;</a>}
-                  <div className="card-foot">
-                    <span>by @{idea.Author}</span>
-                    <button className="upvote" onClick={() => upvote(idea.ID)}>&#9650; {idea.Upvotes}</button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {tab === "groups" && (
-          <div className="panel">
-            <form className="post-form" onSubmit={submitGroup}>
-              <h3>Start a group</h3>
-              <input placeholder="Group name" value={groupForm.name} onChange={(e) => setGroupForm({ ...groupForm, name: e.target.value })} />
-              <div className="form-row">
-                <select value={groupForm.track} onChange={(e) => setGroupForm({ ...groupForm, track: e.target.value })}>
-                  {TRACKS.map((t) => <option key={t.id} value={t.id}>{t.label}</option>)}
-                </select>
-                <input placeholder="Campus / county / location" value={groupForm.location} onChange={(e) => setGroupForm({ ...groupForm, location: e.target.value })} />
-              </div>
-              <button type="submit">Create group</button>
-            </form>
-            <div className="list">
-              {loadingList && <div className="loading">loading&hellip;</div>}
-              {!loadingList && groups.length === 0 && <div className="empty">No groups yet. Start the first one for your track.</div>}
-              {!loadingList && groups.map((g) => (
-                <div className="card" key={g.ID}>
-                  <div className="card-tag" style={{ color: trackMeta(g.Track).color, borderColor: trackMeta(g.Track).color }}>{trackMeta(g.Track).label}</div>
-                  <h4>{g.Name}</h4>
-                  {g.Location && <p className="muted">{g.Location}</p>}
-                  <div className="card-foot">
-                    <span>{g.Members} member{g.Members !== 1 ? "s" : ""} &middot; founded by @{g.Founder}</span>
-                    <button className="upvote" onClick={() => joinGroup(g.ID)}>Join</button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {tab === "clips" && (
-          <div className="panel">
-            <form className="post-form" onSubmit={submitClip}>
-              <h3>Share a clip or link</h3>
-              <input placeholder="Caption — what is this?" value={clipForm.caption} onChange={(e) => setClipForm({ ...clipForm, caption: e.target.value })} />
-              <div className="form-row">
-                <select value={clipForm.track} onChange={(e) => setClipForm({ ...clipForm, track: e.target.value })}>
-                  {TRACKS.map((t) => <option key={t.id} value={t.id}>{t.label}</option>)}
-                </select>
-                <input placeholder="TikTok / YouTube / Instagram link" value={clipForm.link} onChange={(e) => setClipForm({ ...clipForm, link: e.target.value })} />
-              </div>
-              <button type="submit">Share</button>
-            </form>
-            <div className="list clip-grid">
-              {loadingList && <div className="loading">loading&hellip;</div>}
-              {!loadingList && clips.length === 0 && <div className="empty">No clips shared yet.</div>}
-              {!loadingList && clips.map((c) => (
-                <div className="card clip-card" key={c.ID}>
-                  <div className="card-tag" style={{ color: trackMeta(c.Track).color, borderColor: trackMeta(c.Track).color }}>{trackMeta(c.Track).label}</div>
-                  <div className="clip-thumb"><span className="clip-play">&#9654;</span><span className="clip-platform">{c.Platform}</span></div>
-                  <h4>{c.Caption}</h4>
-                  <a className="clip-link" href={c.Link} target="_blank" rel="noreferrer">Open {c.Platform} &#8599;</a>
-                  <div className="card-foot"><span>shared by @{c.Author}</span></div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {tab === "weekly" && (
-          <div className="panel">
-            <div className="weekly-grid">
-              {WEEKLY.map((w, i) => (
-                <div key={w.day} className={"weekly-card" + (i === weeklyOrder.indexOf(todayIdx) ? " is-today" : "")}>
-                  <div className="weekly-day">{w.day}</div>
-                  <div className="weekly-label">{w.label}</div>
-                  <div className="weekly-detail">{w.detail}</div>
-                  {i === weeklyOrder.indexOf(todayIdx) && <div className="weekly-badge">Today</div>}
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-      </main>
+<header class="site-header">
+  <div class="container">
+    <div>
+      <div class="brand">Nairobi Nightowls</div>
+      <span class="brand-tag">BUILT IN THE DARK. SEEN IN THE RESULTS.</span>
     </div>
-  );
-}
+    <nav id="track-tabs-header"></nav>
+  </div>
+</header>
 
-ReactDOM.createRoot(document.getElementById("root")).render(<App />);
-</script>
+<section class="hero">
+  <div class="container">
+    <h1>Quiet operators.<br><em>Loud results.</em></h1>
+    <p class="lede">A place where established Kenyan entrepreneurs mentor youth builders in business, agriculture, tech, civic life, and campus hustle — one redacted profile revealed every night.</p>
+  </div>
+</section>
+
+<section class="reveal-section">
+  <div class="container">
+    <span class="eyebrow">Tonight's Reveal</span>
+    <div id="reveal-card" class="reveal-card">
+      <p class="loading">Loading tonight's Nightowl…</p>
+    </div>
+  </div>
+</section>
+
+<section class="tracks-section">
+  <div class="container">
+    <span class="eyebrow" style="color:var(--text-dim); font-family:var(--font-mono); text-transform:uppercase; letter-spacing:.12em; font-size:.75rem; display:block; margin-bottom:12px;">Ideas Board</span>
+    <nav id="track-tabs"></nav>
+    <div id="ideas-list"></div>
+  </div>
+</section>
+
+<section class="week-section">
+  <div class="container">
+    <span class="eyebrow" style="color:var(--accent); font-family:var(--font-mono); text-transform:uppercase; letter-spacing:.12em; font-size:.75rem; display:block; margin-bottom:16px;">This Week's Rhythm</span>
+    <div id="week-strip"></div>
+  </div>
+</section>
+
+<section class="forms-section container">
+  <div class="form-card">
+    <h3>Join the Nightwatch</h3>
+    <form id="join-form">
+      <label for="full_name">Full name</label>
+      <input id="full_name" name="full_name" required>
+
+      <label for="email">Email</label>
+      <input id="email" name="email" type="email" required>
+
+      <label for="primary_track">Primary track</label>
+      <select id="primary_track" name="primary_track" required>
+        <option value="business">Business</option>
+        <option value="agriculture">Agriculture</option>
+        <option value="it">IT / Tech</option>
+        <option value="politics">Politics & Civic</option>
+        <option value="campus">Campus Life</option>
+      </select>
+
+      <label for="campus_or_county">Campus or county</label>
+      <input id="campus_or_county" name="campus_or_county">
+
+      <button type="submit">Join free</button>
+    </form>
+  </div>
+
+  <div class="form-card">
+    <h3>Post an idea</h3>
+    <form id="idea-form">
+      <label for="idea-title">Title</label>
+      <input id="idea-title" name="title" required>
+
+      <label for="idea-description">Description</label>
+      <textarea id="idea-description" name="description" rows="4" required></textarea>
+
+      <label for="idea-track">Track</label>
+      <select id="idea-track" name="track" required>
+        <option value="business">Business</option>
+        <option value="agriculture">Agriculture</option>
+        <option value="it">IT / Tech</option>
+        <option value="politics">Politics & Civic</option>
+        <option value="campus">Campus Life</option>
+      </select>
+
+      <button type="submit">Post idea</button>
+    </form>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    Nairobi Nightowls — composite/placeholder profiles until opt-in verification. Politics &amp; Civic Life track is non-partisan by design.
+  </div>
+</footer>
+
+<script src="config.js"></script>
+<script src="app.js"></script>
 </body>
 </html>
