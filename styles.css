@@ -14,6 +14,7 @@
   --accent: #F2B705;
   --accent-dim: #7A620A;
   --teal: #3FA79A;
+  --danger: #D9564F;
   --text: #E8E6DF;
   --text-dim: #8A8F98;
   --border: #232838;
@@ -90,14 +91,9 @@ header.site-header {
   font-size: 1.05rem;
 }
 
-/* ---- Signature element: the reveal card -------------------------- */
+/* ---- Shared eyebrow / subhead labels ------------------------------ */
 
-.reveal-section {
-  padding: 40px 0;
-  border-bottom: 1px solid var(--border);
-}
-
-.reveal-section .eyebrow {
+.eyebrow {
   font-family: var(--font-mono);
   font-size: 0.75rem;
   color: var(--accent);
@@ -105,6 +101,57 @@ header.site-header {
   letter-spacing: 0.12em;
   margin-bottom: 12px;
   display: block;
+}
+
+.section-subhead {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 0 0 12px;
+  color: var(--text);
+}
+
+.link-btn {
+  background: none;
+  border: none;
+  color: var(--accent);
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  cursor: pointer;
+  padding: 4px 0;
+}
+
+.link-btn:hover { text-decoration: underline; }
+
+.secondary-btn {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text);
+  border-radius: 4px;
+  padding: 9px 14px;
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  cursor: pointer;
+  margin-top: 8px;
+}
+
+.secondary-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+.danger-btn {
+  background: transparent;
+  border: 1px solid var(--danger);
+  color: var(--danger);
+}
+
+.danger-btn:hover { background: var(--danger); color: var(--bg); }
+
+.text-dim-note { color: var(--text-dim); font-family: var(--font-mono); font-size: 0.75rem; }
+
+/* ---- Signature element: the reveal card -------------------------- */
+
+.reveal-section {
+  padding: 40px 0;
+  border-bottom: 1px solid var(--border);
 }
 
 .reveal-card {
@@ -227,6 +274,100 @@ header.site-header {
 .loading, .empty, .success { color: var(--text-dim); font-family: var(--font-mono); font-size: 0.88rem; }
 .success { color: var(--teal); }
 
+/* ---- Groups section ------------------------------------------------ */
+
+.groups-section { padding: 40px 0; border-top: 1px solid var(--border); }
+
+.groups-grid {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 24px;
+  align-items: start;
+}
+
+@media (max-width: 720px) {
+  .groups-grid { grid-template-columns: 1fr; }
+}
+
+.group-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 16px 18px;
+  margin-bottom: 12px;
+}
+
+.group-card-head { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.group-card-head h4 { margin: 0; font-family: var(--font-display); font-size: 1.05rem; }
+
+.group-role-badge {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--accent);
+  border: 1px solid var(--accent-dim);
+  border-radius: 999px;
+  padding: 2px 10px;
+  white-space: nowrap;
+}
+
+.group-card-meta { color: var(--text-dim); font-size: 0.85rem; margin: 6px 0 12px; }
+
+.manage-group-btn {
+  font-family: var(--font-mono);
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text);
+  border-radius: 4px;
+  padding: 7px 12px;
+  cursor: pointer;
+  font-size: 0.82rem;
+}
+
+.manage-group-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+.group-detail-panel {
+  margin-top: 24px;
+  background: var(--surface-raised);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 24px;
+}
+
+.group-detail-title { font-family: var(--font-display); font-size: 1.3rem; margin: 8px 0 0; }
+
+.group-edit-form { margin: 16px 0 24px; max-width: 480px; }
+.group-edit-form label {
+  display: block; font-family: var(--font-mono); font-size: 0.72rem;
+  color: var(--text-dim); margin: 10px 0 4px; text-transform: uppercase; letter-spacing: 0.08em;
+}
+.group-edit-form input, .group-edit-form textarea {
+  width: 100%; background: var(--bg); border: 1px solid var(--border); color: var(--text);
+  border-radius: 4px; padding: 8px 10px; font-family: var(--font-body); font-size: 0.9rem;
+}
+.group-edit-form button {
+  margin-top: 12px; background: var(--accent); color: var(--bg); border: none;
+  border-radius: 4px; padding: 9px 16px; font-weight: 600; cursor: pointer;
+}
+
+.members-table { width: 100%; border-collapse: collapse; margin-top: 8px; }
+.members-table td { padding: 10px 8px; border-bottom: 1px solid var(--border); font-size: 0.88rem; vertical-align: middle; }
+.member-role { font-family: var(--font-mono); color: var(--text-dim); text-transform: uppercase; font-size: 0.72rem; }
+.member-actions { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+
+.role-select {
+  background: var(--bg); border: 1px solid var(--border); color: var(--text);
+  border-radius: 4px; padding: 5px 6px; font-family: var(--font-mono); font-size: 0.78rem;
+}
+
+.member-actions button {
+  font-family: var(--font-mono); font-size: 0.75rem; background: transparent;
+  border: 1px solid var(--border); color: var(--text); border-radius: 4px;
+  padding: 5px 9px; cursor: pointer;
+}
+.member-actions button:hover { border-color: var(--accent); color: var(--accent); }
+
 /* ---- Weekly rhythm strip ------------------------------------------- */
 
 .week-section { padding: 40px 0; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
@@ -323,6 +464,46 @@ header.site-header {
 }
 
 .form-card button[type="submit"]:hover { background: #ffce33; }
+
+/* ---- Admin panel --------------------------------------------------- */
+
+.admin-section { padding: 40px 0 64px; border-top: 1px solid var(--border); }
+
+#admin-locked { text-align: center; padding: 8px 0; }
+
+.admin-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  margin: 20px 0 24px;
+}
+
+@media (max-width: 720px) {
+  .admin-grid { grid-template-columns: 1fr; }
+}
+
+.admin-note { color: var(--text-dim); font-family: var(--font-mono); font-size: 0.78rem; margin: 10px 0 0; }
+
+#admin-run-reveal-btn, #admin-advance-week-btn {
+  display: block; width: 100%;
+  background: var(--accent); color: var(--bg); border: none;
+  border-radius: 4px; padding: 10px 16px; font-weight: 600; cursor: pointer; margin-bottom: 10px;
+}
+#admin-advance-week-btn { background: transparent; color: var(--text); border: 1px solid var(--border); }
+
+.moderation-item {
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 10px 12px;
+  margin-bottom: 10px;
+  font-size: 0.85rem;
+}
+.moderation-item p { margin: 0 0 8px; color: var(--text-dim); }
+.moderation-item button {
+  font-family: var(--font-mono); font-size: 0.75rem; margin-right: 8px;
+  background: transparent; border: 1px solid var(--border); color: var(--text);
+  border-radius: 4px; padding: 5px 10px; cursor: pointer;
+}
 
 /* ---- Footer -------------------------------------------------------- */
 
