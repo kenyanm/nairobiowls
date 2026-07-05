@@ -313,6 +313,7 @@ header.site-header {
 }
 
 .group-card-meta { color: var(--text-dim); font-size: 0.85rem; margin: 6px 0 12px; }
+.group-card-desc { color: var(--text-dim); font-size: 0.85rem; margin: 0 0 12px; line-height: 1.4; }
 
 .manage-group-btn {
   font-family: var(--font-mono);
