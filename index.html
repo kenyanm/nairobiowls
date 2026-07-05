@@ -7,7 +7,6 @@
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-
 <header class="site-header">
   <div class="container">
     <div>
@@ -17,14 +16,12 @@
     <nav id="track-tabs-header"></nav>
   </div>
 </header>
-
 <section class="hero">
   <div class="container">
     <h1>Quiet operators.<br><em>Loud results.</em></h1>
     <p class="lede">A place where established Kenyan entrepreneurs mentor youth builders in business, agriculture, tech, civic life, and campus hustle — one redacted profile revealed every night.</p>
   </div>
 </section>
-
 <section class="reveal-section">
   <div class="container">
     <span class="eyebrow">Tonight's Reveal</span>
@@ -33,12 +30,61 @@
     </div>
   </div>
 </section>
-
 <section class="tracks-section">
   <div class="container">
     <span class="eyebrow" style="color:var(--text-dim); font-family:var(--font-mono); text-transform:uppercase; letter-spacing:.12em; font-size:.75rem; display:block; margin-bottom:12px;">Ideas Board</span>
     <nav id="track-tabs"></nav>
     <div id="ideas-list"></div>
+  </div>
+</section>
+
+<!-- ---- Groups: create, join, and manage ---------------------------- -->
+<section class="groups-section container" id="groups-section">
+  <span class="eyebrow">Youth Groups</span>
+
+  <div id="groups-signed-out" class="groups-signed-out" hidden>
+    <p class="empty">Join Nightowls (form below) to create or manage a group.</p>
+  </div>
+
+  <div id="groups-signed-in" hidden>
+    <div class="groups-grid">
+      <div>
+        <h3 class="section-subhead">Your groups</h3>
+        <div id="my-groups-list"><p class="loading">Loading your groups…</p></div>
+      </div>
+      <div class="form-card">
+        <h3>Start a group</h3>
+        <form id="create-group-form">
+          <label for="group-name">Group name</label>
+          <input id="group-name" name="name" required>
+          <label for="group-track">Track</label>
+          <select id="group-track" name="track" required>
+            <option value="business">Business</option>
+            <option value="agriculture">Agriculture</option>
+            <option value="it">IT / Tech</option>
+            <option value="politics">Politics &amp; Civic</option>
+            <option value="campus">Campus Life</option>
+          </select>
+          <label for="group-location-type">Location type</label>
+          <select id="group-location-type" name="location_type" required>
+            <option value="campus">Campus</option>
+            <option value="county">County</option>
+            <option value="high_school">High School</option>
+          </select>
+          <label for="group-location-name">Location name</label>
+          <input id="group-location-name" name="location_name" required placeholder="e.g. Kenyatta University">
+          <label for="group-description">Description</label>
+          <textarea id="group-description" name="description" rows="3"></textarea>
+          <button type="submit">Create group</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Group detail / management panel, shown when a group is opened -->
+    <div id="group-detail-panel" class="group-detail-panel" hidden>
+      <button id="group-detail-close" class="link-btn" type="button">&larr; Back to your groups</button>
+      <div id="group-detail-content"></div>
+    </div>
   </div>
 </section>
 
@@ -48,53 +94,132 @@
     <div id="week-strip"></div>
   </div>
 </section>
-
 <section class="forms-section container">
   <div class="form-card">
     <h3>Join the Nightwatch</h3>
     <form id="join-form">
       <label for="full_name">Full name</label>
       <input id="full_name" name="full_name" required>
-
       <label for="email">Email</label>
       <input id="email" name="email" type="email" required>
-
       <label for="primary_track">Primary track</label>
       <select id="primary_track" name="primary_track" required>
         <option value="business">Business</option>
         <option value="agriculture">Agriculture</option>
         <option value="it">IT / Tech</option>
-        <option value="politics">Politics & Civic</option>
+        <option value="politics">Politics &amp; Civic</option>
         <option value="campus">Campus Life</option>
       </select>
-
       <label for="campus_or_county">Campus or county</label>
       <input id="campus_or_county" name="campus_or_county">
-
       <button type="submit">Join free</button>
     </form>
   </div>
-
   <div class="form-card">
     <h3>Post an idea</h3>
     <form id="idea-form">
       <label for="idea-title">Title</label>
       <input id="idea-title" name="title" required>
-
       <label for="idea-description">Description</label>
       <textarea id="idea-description" name="description" rows="4" required></textarea>
-
       <label for="idea-track">Track</label>
       <select id="idea-track" name="track" required>
         <option value="business">Business</option>
         <option value="agriculture">Agriculture</option>
         <option value="it">IT / Tech</option>
-        <option value="politics">Politics & Civic</option>
+        <option value="politics">Politics &amp; Civic</option>
         <option value="campus">Campus Life</option>
       </select>
-
       <button type="submit">Post idea</button>
     </form>
+  </div>
+</section>
+
+<!-- ---- Admin panel: hidden until unlocked with the admin key -------- -->
+<section class="admin-section container" id="admin-section">
+  <div id="admin-locked">
+    <button id="admin-unlock-btn" class="link-btn" type="button">Admin clearance &rarr;</button>
+  </div>
+  <div id="admin-panel" hidden>
+    <span class="eyebrow">Admin — Case File Control</span>
+
+    <div class="admin-grid">
+      <div class="form-card">
+        <h3>Add Nightowl profile</h3>
+        <form id="admin-profile-form">
+          <label for="admin-alias">Alias</label>
+          <input id="admin-alias" name="alias" required placeholder="e.g. The Ruiru Ledger">
+          <label for="admin-track">Track</label>
+          <select id="admin-track" name="track" required>
+            <option value="business">Business</option>
+            <option value="agriculture">Agriculture</option>
+            <option value="it">IT / Tech</option>
+            <option value="politics">Politics &amp; Civic</option>
+            <option value="campus">Campus Life</option>
+          </select>
+          <label for="admin-rarity">Rarity</label>
+          <select id="admin-rarity" name="rarity_tier" required>
+            <option value="local_legend">Local Legend</option>
+            <option value="legendary">Legendary</option>
+          </select>
+          <label for="admin-bio-redacted">Public teaser bio</label>
+          <textarea id="admin-bio-redacted" name="bio_redacted" rows="2" required></textarea>
+          <label for="admin-bio-full">Full bio (Inner Circle only)</label>
+          <textarea id="admin-bio-full" name="bio_full" rows="3" required></textarea>
+          <label for="admin-net-worth">Net worth range</label>
+          <input id="admin-net-worth" name="net_worth_redacted" placeholder="KSh 15M-30M">
+          <label for="admin-county">County</label>
+          <input id="admin-county" name="county_redacted" placeholder="Kiambu">
+          <button type="submit">Add to reveal pool</button>
+        </form>
+        <p class="admin-note" id="admin-pool-count"></p>
+      </div>
+
+      <div class="form-card">
+        <h3>Publish weekly content</h3>
+        <form id="admin-weekly-form">
+          <label for="admin-day">Day</label>
+          <select id="admin-day" name="day_of_week" required>
+            <option value="mon">Mon — Topic of the Week</option>
+            <option value="tue">Tue — Idea of the Week</option>
+            <option value="wed">Wed — Book of the Week</option>
+            <option value="thu">Thu — Company of the Week</option>
+            <option value="fri">Fri — Billionaire of the Week</option>
+            <option value="sat">Sat — Quote of the Week</option>
+            <option value="sun">Sun — The Ledger</option>
+          </select>
+          <label for="admin-week-track">Track</label>
+          <select id="admin-week-track" name="track" required>
+            <option value="business">Business</option>
+            <option value="agriculture">Agriculture</option>
+            <option value="it">IT / Tech</option>
+            <option value="politics">Politics &amp; Civic</option>
+            <option value="campus">Campus Life</option>
+          </select>
+          <label for="admin-week-title">Title</label>
+          <input id="admin-week-title" name="title" required>
+          <label for="admin-week-body">Body</label>
+          <textarea id="admin-week-body" name="body" rows="3" required></textarea>
+          <label for="admin-week-link">Link (optional)</label>
+          <input id="admin-week-link" name="link">
+          <button type="submit">Publish</button>
+          <button type="button" id="admin-draft-ledger-btn" class="secondary-btn">Draft Ledger from activity</button>
+        </form>
+      </div>
+
+      <div class="form-card">
+        <h3>Moderation queue</h3>
+        <div id="admin-moderation-list"><p class="empty">Unlock to load flagged items.</p></div>
+      </div>
+
+      <div class="form-card">
+        <h3>Reveal controls</h3>
+        <button id="admin-run-reveal-btn" type="button">Run tonight's reveal now</button>
+        <button id="admin-advance-week-btn" type="button" class="secondary-btn">Advance week number now</button>
+      </div>
+    </div>
+
+    <button id="admin-lock-btn" class="link-btn" type="button">Lock admin panel</button>
   </div>
 </section>
 
@@ -103,7 +228,6 @@
     Nairobi Nightowls — composite/placeholder profiles until opt-in verification. Politics &amp; Civic Life track is non-partisan by design.
   </div>
 </footer>
-
 <script src="app.js"></script>
 </body>
 </html>
