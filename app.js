@@ -5,7 +5,7 @@
 // Paste your deployed Apps Script Web App URL here after deployment:
 // Extensions > Apps Script > Deploy > New deployment > Web app > Execute as Me, Access: Anyone
 const CONFIG = {
-  API_URL: 'https://script.google.com/macros/s/AKfycbyzSGvuIhOqNC_YzvvSEm7oRSeMlhMLGx-vNn7_YDn88IkhDs_T7HqOjTuTBVHYXO8moA/exec',
+  API_URL: 'https://script.google.com/macros/s/AKfycbzyLyH94K41pUet5JCe96pdzabd7SmZu8jIquwxAEFWZtpWpZQPbyAcoUOSTIExdYIoVw/exec',
   TRACKS: [
     { id: 'business', label: 'Business', color: '#F2B705' },
     { id: 'agriculture', label: 'Agriculture', color: '#4FA37B' },
@@ -91,6 +91,7 @@ function renderTrackTabs() {
       nav.querySelectorAll('.track-tab').forEach(function (b) { b.classList.remove('active'); });
       btn.classList.add('active');
       loadIdeas(ACTIVE_TRACK);
+      loadBrowseGroups(ACTIVE_TRACK);
       // Keep the "post an idea" form's track dropdown in sync with
       // whichever tab the person is currently browsing.
       const ideaTrackSelect = document.getElementById('idea-track');
@@ -245,6 +246,7 @@ function wireForms() {
 // ------------------------------------------------------------------------
 
 function initGroupsSection() {
+  loadBrowseGroups(ACTIVE_TRACK);
   refreshGroupsVisibility();
 
   document.getElementById('create-group-form').addEventListener('submit', function (e) {
@@ -261,6 +263,9 @@ function initGroupsSection() {
     }).then(function () {
       e.target.reset();
       loadMyGroups();
+      // The new group needs to show up for everyone else too, not just
+      // in the creator's own "Your groups" list.
+      loadBrowseGroups(ACTIVE_TRACK);
     }).catch(function (err) { alert(err.message); });
   });
 
@@ -268,6 +273,68 @@ function initGroupsSection() {
     ACTIVE_GROUP_ID = null;
     document.getElementById('group-detail-panel').hidden = true;
   });
+}
+
+/**
+ * Public list of every active group in the current track — visible
+ * whether or not the person has joined Nightowls, so people can see
+ * what exists before committing to sign up. Members of a group see
+ * a "member" badge and a manage/view link instead of a join button.
+ */
+function loadBrowseGroups(track) {
+  const list = document.getElementById('browse-groups-list');
+  list.innerHTML = '<p class="loading">Loading groups…</p>';
+
+  const myGroupsPromise = CURRENT_USER_ID
+    ? apiGet('listMyGroups', { user_id: CURRENT_USER_ID }).catch(function () { return []; })
+    : Promise.resolve([]);
+
+  Promise.all([apiGet('listGroups', { track: track }), myGroupsPromise]).then(function (results) {
+    const groups = results[0];
+    const myGroupIds = new Set(results[1].map(function (g) { return g.group_id; }));
+
+    if (groups.length === 0) {
+      list.innerHTML = '<p class="empty">No groups in this track yet. Start one below.</p>';
+      return;
+    }
+
+    list.innerHTML = groups.map(function (g) {
+      const isMember = myGroupIds.has(g.group_id);
+      return '<article class="group-card">' +
+        '<div class="group-card-head">' +
+        '<h4>' + escapeHtml(g.name) + '</h4>' +
+        (isMember ? '<span class="group-role-badge">member</span>' : '') +
+        '</div>' +
+        '<p class="group-card-meta">' + trackLabel(g.track) + ' · ' + escapeHtml(g.location_name) + ' · ' + (g.member_count || 0) + ' member(s)</p>' +
+        (g.description ? '<p class="group-card-desc">' + escapeHtml(g.description) + '</p>' : '') +
+        (isMember
+          ? '<button class="manage-group-btn" data-group-id="' + g.group_id + '">View / manage</button>'
+          : '<button class="manage-group-btn join-group-btn" data-group-id="' + g.group_id + '">Join group</button>') +
+        '</article>';
+    }).join('');
+
+    list.querySelectorAll('.join-group-btn').forEach(function (btn) {
+      btn.addEventListener('click', function () { handleJoinGroup(btn.dataset.groupId); });
+    });
+    list.querySelectorAll('.manage-group-btn:not(.join-group-btn)').forEach(function (btn) {
+      btn.addEventListener('click', function () { openGroupDetail(btn.dataset.groupId); });
+    });
+  }).catch(function (err) {
+    list.innerHTML = '<p class="empty">Could not load groups: ' + escapeHtml(err.message) + '</p>';
+  });
+}
+
+function handleJoinGroup(groupId) {
+  if (!CURRENT_USER_ID) {
+    alert('Join Nightowls first (form below), then you can join groups.');
+    return;
+  }
+  apiPost('joinGroup', { group_id: groupId, user_id: CURRENT_USER_ID })
+    .then(function () {
+      loadBrowseGroups(ACTIVE_TRACK);
+      loadMyGroups();
+    })
+    .catch(function (err) { alert(err.message); });
 }
 
 function refreshGroupsVisibility() {
@@ -281,6 +348,9 @@ function refreshGroupsVisibility() {
     signedOut.hidden = false;
     signedIn.hidden = true;
   }
+  // Re-render the browse list too — join/member state depends on
+  // whether CURRENT_USER_ID is now set.
+  loadBrowseGroups(ACTIVE_TRACK);
 }
 
 function loadMyGroups() {
